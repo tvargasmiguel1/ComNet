@@ -4,7 +4,7 @@
 #include <stdio.h> 
 
 // Function to initialize a route node with the given key and value
-struct Route * initRoute(char* key, char* value) {
+struct Route * initializeRoute(char* key, char* value) {
     // Allocate memory for a new route node
     struct Route * temp = (struct Route *) malloc(sizeof(struct Route));
 
@@ -37,7 +37,7 @@ void inorder(struct Route* root) {
 struct Route * addRoute(struct Route * root, char* key, char* value) {
     if (root == NULL) {
         // If the tree is empty, create a new route node and return it
-        return initRoute(key, value);
+        return initializeRoute(key, value);
     }
 
     // Compare the key of the new route with the key of the current route

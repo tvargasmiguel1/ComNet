@@ -17,12 +17,12 @@ char * render_static_file(char * fileName) {
     fseek(file, 0, SEEK_SET); // Move the file pointer back to the beginning of the file
 
     char* temp = malloc(sizeof(char) * (fsize + 1)); // Allocate memory to store file content as a string
-    char ch;
+    char placeHolder;
     int i = 0;
 
     // Read characters from the file and store them in the allocated memory
-    while ((ch = fgetc(file)) != EOF) {
-        temp[i] = ch;
+    while ((placeHolder = fgetc(file)) != EOF) {
+        temp[i] = placeHolder;
         i++;
     }
     

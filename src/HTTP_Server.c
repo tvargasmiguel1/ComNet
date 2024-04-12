@@ -4,7 +4,7 @@
 #include <sys/socket.h>
 
 // Initialize the HTTP server with the given port number
-void init_server(HTTP_Server * http_server, int port) {
+void initializeServer(HTTP_Server * http_server, int port) {
 	http_server->port = port;
 
     // Create a socket for the server
@@ -23,5 +23,5 @@ void init_server(HTTP_Server * http_server, int port) {
 
     // Store the server socket in the HTTP server structure
 	http_server->socket = server_socket;
-	printf("HTTP Server Initialized\nPort: %d\n", http_server->port);
+	printf("HTTP Server running\nPort: %d\n", http_server->port);
 }

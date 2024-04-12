@@ -15,12 +15,12 @@
 int main() {
     // Initialize HTTP_Server
     HTTP_Server http_server;
-    init_server(&http_server, 6969); // Initialize the server on port 6969
+    initializeServer(&http_server, 6969); // Initialize the server on port 6969
 
     int client_socket;
 
     // Registering Routes
-    struct Route *route = initRoute("/", "index.html"); // Initialize the root route
+    struct Route *route = initializeRoute("/", "index.html"); // Initialize the root route
     addRoute(route, "/about", "about.html"); // Add the "/about" route
 
     printf("\n====================================\n");
@@ -29,22 +29,22 @@ int main() {
     inorder(route);
 
     while (1) { // Infinite loop to handle incoming client requests
-        char client_msg[4096] = ""; // Buffer to store client request
+        char clientMessage[4096] = ""; // Buffer to store client request
 
         // Accept client connection
         client_socket = accept(http_server.socket, NULL, NULL);
 
         // Read client request
-        read(client_socket, client_msg, 4095);
+        read(client_socket, clientMessage, 4095);
 
         // Print client request
-        printf("%s\n", client_msg);
+        printf("%s\n", clientMessage);
 
         // Parsing client socket header to get HTTP method and route
         char *method = ""; // Variable to store HTTP method
         char *urlRoute = ""; // Variable to store requested route
 
-        char *client_http_header = strtok(client_msg, "\n"); // Tokenize client request header
+        char *client_http_header = strtok(clientMessage, "\n"); // Tokenize client request header
 
         char *header_token = strtok(client_http_header, " "); // Tokenize header components
         int header_parse_counter = 0;

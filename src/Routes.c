@@ -1,7 +1,7 @@
-#include "Routes.h" 
-#include <stdlib.h> 
-#include <string.h> 
-#include <stdio.h> 
+#include "Routes.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 // Function to initialize a route node with a copied key and value for safe memory management
 struct Route * initializeRoute(char* key, char* value) {
@@ -14,7 +14,7 @@ struct Route * initializeRoute(char* key, char* value) {
     temp->key = strdup(key);
     if (temp->key == NULL) {
         free(temp);
-        perror("Failed to allocate memory for key");
+        perror("Failed to duplicate key");
         return NULL;
     }
 
@@ -22,7 +22,7 @@ struct Route * initializeRoute(char* key, char* value) {
     if (temp->value == NULL) {
         free(temp->key);
         free(temp);
-        perror("Failed to allocate memory for value");
+        perror("Failed to duplicate value");
         return NULL;
     }
 
@@ -75,4 +75,3 @@ struct Route * search(struct Route * root, char* key) {
     }
     return NULL;
 }
-

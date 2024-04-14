@@ -1,0 +1,9 @@
+# ninja log v5
+1	21	1713065657296755688	CMakeFiles/ComNet.dir/src/Response.c.o	57612c161815d6b
+0	24	1713065657300755475	CMakeFiles/ComNet.dir/src/HTTP_Server.c.o	9512c5dfe2b27ff1
+1	24	1713065657300755475	CMakeFiles/ComNet.dir/src/Routes.c.o	de20517e0e3d2e09
+1	23	1713067078543319783	CMakeFiles/ComNet.dir/src/Response.c.o	57612c161815d6b
+1	25	1713067078547318099	CMakeFiles/ComNet.dir/src/Routes.c.o	de20517e0e3d2e09
+0	26	1713067078547318099	CMakeFiles/ComNet.dir/src/HTTP_Server.c.o	9512c5dfe2b27ff1
+1	28	1713067078551316415	CMakeFiles/ComNet.dir/src/main.c.o	5d569b74b98b19a3
+28	42	1713067078563311364	ComNet	cb591c3eb6e7d52a

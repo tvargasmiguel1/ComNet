@@ -9,55 +9,70 @@
 #include "Routes.h"
 #include "Response.h"
 
-void setup_routes(struct Route **route) {
-    *route = initializeRoute("/", "index.html");
-    addRoute(*route, "/about", "about.html");
-}
+int main() {
+    HTTP_Server http_server;
+    initializeServer(&http_server, 6969); // Initialize the server on port 6969
 
-void display_routes(const struct Route *route) {
+    // Registering Routes
+    struct Route *route = initializeRoute("/", "index.html");
+    addRoute(route, "/about", "about.html");
+
+    // Display all available routes
     printf("\n====================================\n");
     printf("=========ALL AVAILABLE ROUTES========\n");
     inorder(route);
-}
 
-int parse_request(int client_socket, char **method, char **urlRoute) {
-    char clientMessage[4096] = {0};
-    int read_bytes = read(client_socket, clientMessage, sizeof(clientMessage) - 1);
-    if (read_bytes < 0) return -1;
+    while (1) {
+        int client_socket = accept(http_server.socket, NULL, NULL);
+        if (client_socket < 0) {
+            perror("Failed to accept client connection");
+            continue;
+        }
 
-    char *client_http_header = strtok(clientMessage, "\n");
-    if (!client_http_header) return -1;
+        char clientMessage[4096] = {0};
+        int read_bytes = read(client_socket, clientMessage, sizeof(clientMessage) - 1);
+        if (read_bytes < 0) {
+            perror("Failed to read from client");
+            close(client_socket);
+            continue;
+        }
 
-    *method = strtok(client_http_header, " ");
-    *urlRoute = strtok(NULL, " ");
-    if (!*method || !*urlRoute) return -1;
+        printf("Request:\n%s\n", clientMessage);
+
+        char *method = strtok(clientMessage, " ");
+        char *urlRoute = strtok(NULL, " ");
+        if (!method || !urlRoute) {
+            perror("Error parsing request");
+            close(client_socket);
+            continue;
+        }
+
+        printf("Method: %s\nRoute: %s\n", method, urlRoute);
+
+        // Resolve the route to a template file
+        char template_path[256] = "templates/";
+        struct Route *destination = strstr(urlRoute, "/static/") ? NULL : search(route, urlRoute);
+
+        if (destination) {
+            strcat(template_path, destination->value);
+        } else {
+            strcpy(template_path, "templates/404.html");
+        }
+
+        char *response_data = render_static_file(template_path);
+        if (!response_data) {
+            perror("Failed to load template file");
+            response_data = "<html><body><h1>500 Internal Server Error</h1></body></html>"; // Fallback error message
+        }
+
+        char http_header[4096];
+        snprintf(http_header, sizeof(http_header), "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n%s", response_data);
+
+        send(client_socket, http_header, strlen(http_header), 0);
+
+        close(client_socket);
+        free(response_data);
+    }
 
     return 0;
 }
-
-void handle_connection(int client_socket, const struct Route *route) {
-    char *method, *urlRoute;
-    if (parse_request(client_socket, &method, &urlRoute) == -1) {
-        perror("Failed to parse HTTP request");
-        return;
-    }
-
-    printf("The method is %s\n", method);
-    printf("The route is %s\n", urlRoute);
-
-    char template[256] = "templates/";
-    const struct Route *destination = search(route, urlRoute);
-    if (!destination) {
-        strcat(template, "404.html");
-    } else {
-        strcat(template, destination->value);
-    }
-
-    char *response_data = render_static_file(template);
-    if (!response_data) {
-        perror("Failed to load template");
-        return;
-    }
-
-    char http_header[4096] = "HTTP/1.1 200 OK\r\nContent-Type:
-

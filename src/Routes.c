@@ -3,79 +3,76 @@
 #include <string.h> 
 #include <stdio.h> 
 
-// Function to initialize a route node with the given key and value
+// Function to initialize a route node with a copied key and value for safe memory management
 struct Route * initializeRoute(char* key, char* value) {
-    // Allocate memory for a new route node
     struct Route * temp = (struct Route *) malloc(sizeof(struct Route));
+    if (temp == NULL) {
+        perror("Failed to allocate memory for route");
+        return NULL;
+    }
 
-    // Set the key and value fields of the route node
-    temp->key = key;
-    temp->value = value;
+    temp->key = strdup(key);
+    if (temp->key == NULL) {
+        free(temp);
+        perror("Failed to allocate memory for key");
+        return NULL;
+    }
 
-    // Initialize left and right child pointers to NULL
+    temp->value = strdup(value);
+    if (temp->value == NULL) {
+        free(temp->key);
+        free(temp);
+        perror("Failed to allocate memory for value");
+        return NULL;
+    }
+
     temp->left = temp->right = NULL;
-
-    // Return the initialized route node
     return temp;
 }
 
-// Function to perform an inorder traversal of the binary search tree rooted at root and print the key-value pairs of each route
+// Function to perform an inorder traversal of the BST and print the key-value pairs
 void inorder(struct Route* root) {
     if (root != NULL) {
-        // Recursively traverse the left subtree
         inorder(root->left);
-        
-        // Print the key-value pair of the current route node
         printf("%s -> %s \n", root->key, root->value);
-        
-        // Recursively traverse the right subtree
         inorder(root->right);
     }
 }
 
-// Function to add a new route with the given key and value to the binary search tree rooted at root
-struct Route * addRoute(struct Route * root, char* key, char* value) {
+// Helper function to insert a new node into the BST
+struct Route * addRouteHelper(struct Route * root, char* key, char* value) {
     if (root == NULL) {
-        // If the tree is empty, create a new route node and return it
         return initializeRoute(key, value);
     }
 
-    // Compare the key of the new route with the key of the current route
-    if (strcmp(key, root->key) == 0) {
-        // If the keys are equal, print a warning message
+    int cmp = strcmp(key, root->key);
+    if (cmp == 0) {
         printf("============ WARNING ============\n");
         printf("A Route For \"%s\" Already Exists\n", key);
-    } else if (strcmp(key, root->key) > 0) {
-        // If the new key is greater than the current key, recursively add the route to the right subtree
-        root->right = addRoute(root->right, key, value);
+    } else if (cmp > 0) {
+        root->right = addRouteHelper(root->right, key, value);
     } else {
-        // If the new key is less than the current key, recursively add the route to the left subtree
-        root->left = addRoute(root->left, key, value);
+        root->left = addRouteHelper(root->left, key, value);
     }
-
-    // Return the root of the modified binary search tree
     return root;
 }
 
-// Function to search for a route with the given key in the binary search tree rooted at root
+struct Route * addRoute(struct Route * root, char* key, char* value) {
+    return addRouteHelper(root, key, value);
+}
+
+// Function to search for a route in the BST
 struct Route * search(struct Route * root, char* key) {
-    if (root == NULL) {
-        // If the tree is empty or the key is not found, return NULL
-        return NULL;
-    } 
-
-    // Compare the key of the current route with the given key
-    if (strcmp(key, root->key) == 0) {
-        // If the keys are equal, return the current route
-        return root;
-    } else if (strcmp(key, root->key) > 0) {
-        // If the given key is greater than the current key, recursively search the right subtree
-        return search(root->right, key);
-    } else if (strcmp(key, root->key) < 0) {
-        // If the given key is less than the current key, recursively search the left subtree
-        return search(root->left, key);
+    while (root != NULL) {
+        int cmp = strcmp(key, root->key);
+        if (cmp == 0) {
+            return root;
+        } else if (cmp > 0) {
+            root = root->right;
+        } else {
+            root = root->left;
+        }
     }
-
-    // Return the found route
-    return root;
+    return NULL;
 }
+

@@ -9,6 +9,9 @@ char *render_static_file(char *fileName) {
         return NULL;
     }
 
+    // Debug: Print the file path being accessed
+    printf("Attempting to open file at path: %s\n", fileName);
+
     FILE *file = fopen(fileName, "r"); // Open the file in read mode
     if (!file) { // Check if file opening failed
         perror("Error opening file");
@@ -52,3 +55,4 @@ char *render_static_file(char *fileName) {
     fclose(file); // Close the file
     return content; // Return the content
 }
+

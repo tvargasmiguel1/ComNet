@@ -11,15 +11,15 @@
 
 int main() {
     HTTP_Server http_server;
-    initializeServer(&http_server, 6969); // Initialize the server on port 6969
+    initializeServer(&http_server, 7227); // Initialize the server on port 7227
 
     // Registering Routes
-    struct Route *route = initializeRoute("/", "index.html");
-    addRoute(route, "/about", "about.html");
+    struct Route *route = initializeRoute("/", "demo.html");
+
 
     // Display all available routes
-    printf("\n====================================\n");
-    printf("=========ALL AVAILABLE ROUTES========\n");
+    printf("\n");
+    printf("     Active ROUTES\n");
     inorder(route);
 
     while (1) {
@@ -50,16 +50,16 @@ int main() {
         printf("Method: %s\nRoute: %s\n", method, urlRoute);
 
         // Resolve the route to a template file
-        char template_path[256] = "templates/";
+        char demo_path[256] = "../../ComNet/Demo/";
         struct Route *destination = strstr(urlRoute, "/static/") ? NULL : search(route, urlRoute);
 
         if (destination) {
-            strcat(template_path, destination->value);
+            strcat(demo_path, destination->value);
         } else {
-            strcpy(template_path, "templates/404.html");
+            strcpy(demo_path, "../../ComNet/Demo/404.html");
         }
 
-        char *response_data = render_static_file(template_path);
+        char *response_data = render_static_file(demo_path);
         if (!response_data) {
             perror("Failed to load template file");
             response_data = "<html><body><h1>500 Internal Server Error</h1></body></html>"; // Fallback error message
@@ -76,3 +76,6 @@ int main() {
 
     return 0;
 }
+
+
+
